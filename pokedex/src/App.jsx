@@ -1,96 +1,62 @@
 import { useState, useEffect } from "react";
 import PokemonCard from "./components/PokemonCard";
 import "./App.css";
+ 
 
+const API_URL = "https://pokeapi.co/api/v2/pokemon/";
+ 
 function App() {
-  // Estados de la aplicación
-  // Estado para guardar el nombre del Pokémon que se va a consultar 
-  const [nombrePokemon, setNombrePokemon] = useState("pikachu");
-  
-  // Estado para almacenar los datos detallados del Pokémon devueltos por la API
   const [pokemon, setPokemon] = useState(null);
-  
-  // Estado para controlar si la peticion es true
   const [cargando, setCargando] = useState(true);
-  
-  // Estado para capturar y almacenar mensajes de error si la petición falla
   const [error, setError] = useState(null);
-
-  // Efecto secundario para la petición a la API
-  // Se ejecuta al montar el componente y cada vez que cambia la variable nombrePokemon
+ 
+  const [id, setId] = useState(1);
+ 
   useEffect(() => {
-    async function cargarPokemon() {
+    async function cargar() {
+      setCargando(true);
+      setError(null);
       try {
-        setCargando(true); // Activamos el indicador de carga
-        setError(null);    // Limpiamos cualquier error previo
-
-        // Hacemos la petición  a la PokéAPI usando el nombre actual
-        const res = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${nombrePokemon}`
-        );
-
-        // Si la respuesta no es exitosa lanzamos un error
-        if (!res.ok) {
-          throw new Error("Pokémon no encontrado");
-        }
-
-        // Convertimos la respuesta a JSON y actualizamos el estado del Pokémon
+       
+        const res = await fetch(`${API_URL}${id}`);
+       
+        if (!res.ok) throw new Error(`Pokemon no encontrado (${res.status})`);
         const data = await res.json();
         setPokemon(data);
-      } catch (err) {
-        // Si ocurre un fallo en el try, lo capturamos y guardamos el mensaje
-        setError(err.message);
+      } catch (error) {
+        setError(error.message);
       } finally {
-        // Se ejecuta siempre al terminar (con éxito o error), desactivando la carga
         setCargando(false);
       }
     }
-
-    cargarPokemon();
-  }, [nombrePokemon]); // Dependencia: se vuelve a disparar si el usuario cambia de Pokémon
-
-  //  Renderizado la interfaz 
+ 
+    cargar();
+  }, [id]);
+ 
+  const siguiente = () => setId(id + 1);
+  const atras = () => {
+    if (id > 1) {
+      setId(id - 1);
+    }
+  };
+ 
   return (
     <>
       <h1>Pokedex App</h1>
-
-      {/* Botones que actualizan el estado `nombrePokemon` al hacer clic */}
-      <button onClick={() => setNombrePokemon("pikachu")}>
-        Pikachu
-      </button>
-
-      <button onClick={() => setNombrePokemon("charizard")}>
-        Charizard
-      </button>
-
-      <button onClick={() => setNombrePokemon("bulbasaur")}>
-        Bulbasaur
-      </button>
-
-      <button onClick={() => setNombrePokemon("squirtle")}>
-        Squirtle
-      </button>
-
-      <button onClick={() => setNombrePokemon("Ekans")}>
-        Ekans
-      </button>
-
-      <button onClick={() => setNombrePokemon("Kyurem")}>
-        Kyurem
-      </button>
-
-      {/*  muestra "Cargando..." si `cargando` = true */}
+ 
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={atras} disabled={id <= 1}>
+          Anterior
+        </button>
+        <span style={{ margin: "0 15px" }}>ID: {id}</span>
+        <button onClick={siguiente}>Siguiente</button>
+      </div>
+ 
       {cargando && <p>Cargando...</p>}
-      
-      {/*  muestra el error si la variable `error` tiene contenido */}
       {error && <p>Error: {error}</p>}
-
-      {/*  muestra la tarjeta solo si hay datos, ya no carga y no hay error */}
-      {pokemon && !cargando && !error && (
-        <PokemonCard pokemon={pokemon} />
-      )}
+      {pokemon && !cargando && !error && <PokemonCard pokemon={pokemon} />}
     </>
   );
 }
-
+ 
 export default App;
