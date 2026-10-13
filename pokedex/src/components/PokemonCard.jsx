@@ -5,7 +5,11 @@ const PokemonCard = ({ pokemon }) => {
 
   return (
     <article className="tarjeta">
-      <img src={image} alt={pokemon.name} />
+      <img 
+        src={image} 
+        alt={pokemon.name} 
+        style={{ width: "120px", height: "120px", objectFit: "contain" }} 
+      />
       <h2>
         #{pokemon.id} {pokemon.name}
       </h2>
