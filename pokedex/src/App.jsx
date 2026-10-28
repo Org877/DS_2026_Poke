@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PokemonCard from "./components/PokemonCard";
-import { collection, doc, setDoc } from "firebase/firestore";
+// 1. Importamos deleteDoc y doc desde firestore
+import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import "./App.css";
 
@@ -30,6 +31,19 @@ function App() { // Logica
       img: p.sprites?.other?.["official-artwork"]?.front_default || p.sprites?.front_default || p.img
     });
     setEquipo([...equipo, p]);
+  }
+
+  // 2. Función para quitar un Pokémon del equipo y de Firestore
+  async function quitar(id) {
+    try {
+      // Eliminar de Firebase Firestore
+      await deleteDoc(doc(db, "equipo", String(id)));
+      
+      // Actualizar el estado local filtrando el Pokémon eliminado
+      setEquipo(equipo.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar de Firestore:", err);
+    }
   }
 
   useEffect(() => {
@@ -86,7 +100,26 @@ function App() { // Logica
       {/* Pantalla*/}
       <h2>Mi equipo ({equipo.length}/6)</h2> 
       <section className="equipo">
-        {equipo.map((p) => ( <PokemonCard key={p.id} pokemon={p} />))}
+        {equipo.map((p) => ( 
+          <div key={p.id} style={{ position: "relative" }}>
+            <PokemonCard pokemon={p} />
+            {/* 3. Botón para quitar el Pokémon del equipo */}
+            <button 
+              onClick={() => quitar(p.id)}
+              style={{
+                backgroundColor: "#ff4d4d",
+                color: "white",
+                border: "none",
+                padding: "5px 10px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                marginTop: "5px"
+              }}
+            >
+              Quitar
+            </button>
+          </div>
+        ))}
       </section>
 
       {/* Regla de Negocio  */}
