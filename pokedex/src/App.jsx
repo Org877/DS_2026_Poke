@@ -4,23 +4,27 @@ import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import "./App.css";
 
-const LIMIT = 10;
+// Regla 
+const LIMIT = 10; 
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
 
-function App() {
+function App() { // Logica
   const [pokemonList, setPokemonList] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Inicia en 0 (vacío)
+  // El equipo inicia vacío 
   const [equipo, setEquipo] = useState([]);
   const [offset, setOffset] = useState(0);
 
   async function agregar(p) {
-    if (equipo.length >= 6) return;
-    if (equipo.some((e) => e.id === p.id)) return;
+    // Regla 
+    if (equipo.length >= 6) return; 
     
-    // Guardamos en Firebase
+    // Regla 
+    if (equipo.some((e) => e.id === p.id)) return; 
+    
+    // Base de Datos
     await setDoc(doc(db, "equipo", String(p.id)), {
       nombre: p.name || p.nombre,
       img: p.sprites?.other?.["official-artwork"]?.front_default || p.sprites?.front_default || p.img
@@ -62,10 +66,13 @@ function App() {
 
   return (
     <>
-      <h1>Pokedex App</h1>
+      {/* Pantalla */}
+      <h1>Pokedex App</h1> 
 
+      {/* Pantalla */}
       <div style={{ marginBottom: "20px" }}>
-        <button onClick={atras} disabled={offset === 0 || cargando}>
+        {/* Regla */}
+        <button onClick={atras} disabled={offset === 0 || cargando}> 
           Anterior
         </button>
         <span style={{ margin: "0 15px" }}>
@@ -76,23 +83,27 @@ function App() {
         </button>
       </div>
 
-      <h2>Mi equipo ({equipo.length}/6)</h2>
+      {/* Pantalla*/}
+      <h2>Mi equipo ({equipo.length}/6)</h2> 
       <section className="equipo">
         {equipo.map((p) => ( <PokemonCard key={p.id} pokemon={p} />))}
       </section>
 
-      {cargando && <p>Cargando...</p>}
-      {error && <p>Error: {error}</p>}
+      {/* Regla de Negocio  */}
+      {cargando && <p>Cargando...</p>} 
+      {error && <p>Error: {error}</p>} 
 
+      {/* Pantalla */}
       <div
-        className="pokemon-grid"
+        className="pokemon-grid" 
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
           gap: "20px",
         }}
       >
-        {!cargando && !error && pokemonList.map((pokemon) => (<PokemonCard
+        {!cargando && !error && pokemonList.map((pokemon) => (
+          <PokemonCard 
             key={pokemon.id}
             pokemon={pokemon}
             onAgregar={agregar}
