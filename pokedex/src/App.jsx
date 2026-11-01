@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import PokemonCard from "./components/PokemonCard";
-// 1. Importamos deleteDoc y doc desde firestore
 import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import "./App.css";
