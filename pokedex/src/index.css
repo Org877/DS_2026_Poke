@@ -110,5 +110,6 @@ code {
   background: var(--code-bg);
 }
 */
-@import "tailwindcss/base";
+
+@import "tailwindcss";
 
